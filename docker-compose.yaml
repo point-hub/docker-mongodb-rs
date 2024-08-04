@@ -1,33 +1,34 @@
-version: "3.8"
-
 services:
   mongo1:
-    image: mongo:6
+    image: mongo:7
     container_name: mongo1
-    command: ["--replSet", "replica-set", "--bind_ip_all", "--port", "27001"]
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27001"]
     volumes:
-      - ~/mongodb/data/mongo-1:/data/db
+      - ~/mongodb/data-7/mongo-1:/data/db
+      - ~/mongodb/data-7/mongoconfig-1:/data/configdb
     ports:
       - 27001:27001
     healthcheck:
-      test: test $$(echo "rs.initiate({_id:'replica-set',members:[{_id:0,host:\"mongo1:27001\"},{_id:1,host:\"mongo2:27002\"},{_id:2,host:\"mongo3:27003\"}]}).ok || rs.status().ok" | mongo --port 27001 --quiet) -eq 1
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:\'mongo1:27001\',priority:1},{_id:1,host:\'mongo2:27002\',priority:0.5},{_id:2,host:\'mongo3:27003\',priority:0.5}]}) }" | mongosh --port 27001 --quiet
       interval: 10s
       start_period: 30s
 
   mongo2:
-    image: mongo:6
+    image: mongo:7
     container_name: mongo2
-    command: ["--replSet", "replica-set", "--bind_ip_all", "--port", "27002"]
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27002"]
     volumes:
-      - ~/mongodb/data/mongo-2:/data/db
+      - ~/mongodb/data-7/mongo-2:/data/db
+      - ~/mongodb/data-7/mongoconfig-2:/data/configdb
     ports:
       - 27002:27002
 
   mongo3:
-    image: mongo:6
+    image: mongo:7
     container_name: mongo3
-    command: ["--replSet", "replica-set", "--bind_ip_all", "--port", "27003"]
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27003"]
     volumes:
-      - ~/mongodb/data/mongo-3:/data/db
+      - ~/mongodb/data-7/mongo-3:/data/db
+      - ~/mongodb/data-7/mongoconfig-3:/data/configdb
     ports:
       - 27003:27003

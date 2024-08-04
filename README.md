@@ -24,7 +24,7 @@ docker-compose up -d
 use connection string
 
 ```
-mongodb://localhost:27001/?replicaSet=replica-set
+mongodb://localhost:27001/?replicaSet=rs0
 ```
 
 ## Open MongoDB Shell in Docker
